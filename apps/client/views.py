@@ -12,7 +12,6 @@ from flask import jsonify
 from exts import db
 from scrapyd_requests import *
 
-
 bp = Blueprint("client", __name__, url_prefix='/client')
 
 
@@ -38,7 +37,7 @@ def projects():
 @login_required
 def hlist():
     host_list = HostList.query.all()
-    return render_template('host-list.html',host_list=host_list)
+    return render_template('host-list.html', host_list=host_list)
 
 
 @bp.route('/daemonstatus', methods=['POST'])
@@ -46,7 +45,7 @@ def hlist():
 def daemonstatus():
     ip_address = request.form.get('ip_address')
     port_num = request.form.get('port_num')
-    req = connect_host(ip_address,port_num,10)
+    req = connect_host(ip_address, port_num, 10)
     if req.get('status') == 'ok':
         return jsonify({'code': 200})
     else:
