@@ -10,10 +10,10 @@
 </div>
 <div class="x-body">
   <xblock>
-    <button class="layui-btn" onclick="x_admin_show('添加主机','./host-add.html')"><i class="layui-icon"></i>添加</button>
+    <button class="layui-btn" onclick="x_admin_show('添加主机','./hadd')"><i class="layui-icon"></i>添加</button>
     <span class="x-right" style="line-height:40px">爬虫服务器数量:88</span>
   </xblock>
-  <table class="layui-table">
+  <table class="layui-table" id="host_list">
     <thead>
       <tr>
         <th>状态</th>
@@ -25,19 +25,20 @@
         <th>操作</th>
     </thead>
     <tbody>
+    {% for host in host_list %}
       <tr>
         <td class="td-status">
-          <span class="layui-btn layui-btn-normal layui-btn-mini">已启用</span></td>
-        <td>1</td>
-        <td>本地主机</td>
-        <td>192.168.3.10</td>
-        <td>6800</td>
-        <td>2017-01-01 11:11:42</td>
+          <span class="layui-btn layui-btn-normal layui-btn-mini" id="run_status"></span></td>
+        <td>{{ host.id }}</td>
+        <td>{{ host.host_name }}</td>
+        <td>{{ host.ip_address }}</td>
+        <td>{{ host.port_num }}</td>
+        <td>{{ host.create_time }}</td>
         <td class="td-manage">
           <a onclick="member_stop(this,'10001')" href="javascript:;"  title="启用">
             <i class="layui-icon">&#xe601;</i>
           </a>
-          <a title="编辑"  onclick="x_admin_show('编辑','host-add.html')" href="javascript:;">
+          <a title="编辑"  onclick="x_admin_show('编辑','./hadd')" href="javascript:;">
             <i class="layui-icon">&#xe642;</i>
           </a>
           <a title="删除" onclick="member_del(this,'要删除的id')" href="javascript:;">
@@ -45,6 +46,7 @@
           </a>
         </td>
       </tr>
+    {% endfor %}
     </tbody>
   </table>
   <div class="page">
@@ -59,6 +61,53 @@
   </div>
 
 </div>
+
+
+<script>
+
+    $(function () {
+        var csrf_token = "{{ csrf_token() }}";
+
+            $.ajaxSetup({
+                beforeSend: function(xhr, settings) {
+                    if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) {
+                        xhr.setRequestHeader("X-CSRFToken", csrf_token);
+                    }
+                }
+            });
+
+
+        $("#host_list").find("tr").each(function(){
+            var tdArr = $(this).children('td');
+            var ip_address = tdArr.eq(3).text();//ip地址
+            var port_num = tdArr.eq(4).text();//端口号
+
+            tdArr.children('span').eq(0).text('连接中')
+            console.log(tdArr.eq(0).span);
+
+            $.post({
+                url:'http://127.0.0.1:5000/client/daemonstatus',
+                data:{
+                    'ip_address': ip_address,
+                    'port_num' : port_num
+                },
+                success:function (data) {
+                    if (data['code']==200){
+                           tdArr.children('span').eq(0).text('正在运行');
+                       }else {
+                           tdArr.children('span').eq(0).text('连接失败');
+                           }
+                        },
+                error: function () {
+                            tdArr.children('span').eq(0).text('未连接');
+                     }
+        });
+
+    });
+    })
+
+</script>
+
 
 <script>
   layui.use('laydate', function(){

@@ -6,8 +6,12 @@
 from flask import Blueprint, render_template, request, session, redirect, url_for
 from flask.views import MethodView
 import config
-from apps.check.decorators import login_required
-from apps.models.models import *
+from ..check.decorators import login_required
+from ..models.models import *
+from flask import jsonify
+from exts import db
+from scrapyd_requests import *
+
 
 bp = Blueprint("client", __name__, url_prefix='/client')
 
@@ -33,7 +37,37 @@ def projects():
 @bp.route('/hlist')
 @login_required
 def hlist():
-    return render_template('host-list.html')
+    host_list = HostList.query.all()
+    return render_template('host-list.html',host_list=host_list)
+
+
+@bp.route('/daemonstatus', methods=['POST'])
+@login_required
+def daemonstatus():
+    ip_address = request.form.get('ip_address')
+    port_num = request.form.get('port_num')
+    req = connect_host(ip_address,port_num,10)
+    if req.get('status') == 'ok':
+        return jsonify({'code': 200})
+    else:
+        return jsonify({'code': 404, 'status': 'error'})
+
+
+class Host_add(MethodView):
+    decorators = [login_required]
+
+    def get(self):
+        return render_template('host-add.html')
+
+    def post(self):
+        host_name = request.form.get('host_name')
+        ip_address = request.form.get('ip_address')
+        port_num = request.form.get('port_num')
+        host_list = HostList(host_name=host_name, ip_address=ip_address, port_num=port_num)
+
+        db.session.add(host_list)
+        db.session.commit()
+        return jsonify({'code': 200})
 
 
 class Login(MethodView):
@@ -54,3 +88,4 @@ class Login(MethodView):
 
 
 bp.add_url_rule('/login', view_func=Login.as_view('login'))
+bp.add_url_rule('/hadd', view_func=Host_add.as_view('hadd'))

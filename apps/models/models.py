@@ -40,3 +40,11 @@ class Clients(db.Model):
     user = db.Column(db.VARCHAR(50), nullable=True)
     pwd = db.Column(db.VARCHAR(50), nullable=True)
     create_time = db.Column(db.DateTime, default=datetime.now)
+
+class HostList(db.Model):
+    __tablename__ = 'host_list'
+    id = db.Column(db.Integer,primary_key=True,autoincrement=True)
+    host_name = db.Column(db.String(50),nullable=False)
+    ip_address = db.Column(db.String(50),nullable=False)
+    port_num = db.Column(db.String(50),nullable=False)
+    create_time = db.Column(db.DateTime,default=datetime.now)
