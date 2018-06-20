@@ -45,7 +45,17 @@
 
     </div>
     <script>
-        var v = new Vue({
+
+        Array.prototype.removeItem = function (val) {
+            for (var i = 0; i < this.length; i++) {
+                if (this[i].name == val) {
+                    this.splice(i, 1);
+                    break;
+                }
+            }
+        };
+
+        new Vue({
             delimiters: ['{[', ']}'],
             el: "#project_list",
             data: {
@@ -59,10 +69,19 @@
             },
             methods: {
                 del_project: function (filename) {
-                    alert({filename:filename,_csrf:$('#csrf_input').val()}._csrf);
-                    $.deleteJSON('/api/projects',{filename:filename,_csrf:$('#csrf_input').val()},function (data) {
-                       alert(data);
+                    _self = this;
+                    layer.confirm('确认要删除吗？', function (index) {
+                        $.deleteJSON('/api/projects', {filename: filename}, $('#csrf_input').val(), function (data, status) {
+                            if (data.code == 200) {
+                                _self.project_list.removeItem(filename);
+                                layer.msg('已删除!', {icon: 1, time: 1000});
+                            } else {
+                                layer.msg(data.msg, {icon: 1, time: 1000});
+                            }
+                        });
+
                     });
+
                 }
             }
         });
@@ -108,11 +127,7 @@
 
         /*用户-删除*/
         function member_del(obj, id) {
-            layer.confirm('确认要删除吗？', function (index) {
-                alert(obj);
-                $(obj).parents("tr").remove();
-                layer.msg('已删除!', {icon: 1, time: 1000});
-            });
+
         }
 
 

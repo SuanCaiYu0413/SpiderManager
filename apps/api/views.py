@@ -5,6 +5,7 @@
 
 from flask import Blueprint
 from flask_restful import request, Api, Resource
+from flask_restful import reqparse
 from apps.check.decorators import api_required
 from apps.models.models import *
 from utils.tools import get_eggfile_count, del_eggfile
@@ -13,7 +14,6 @@ from utils.result import *
 bp = Blueprint("api", __name__, url_prefix='/api')
 
 api = Api(bp)
-todolist = []
 
 
 class BaseInfo(Resource):
@@ -33,9 +33,9 @@ class EggFile(Resource):
     @api_required
     def delete(self):
         print(request)
-        args = request.json
-        print(args)
+        args = request.values
         filename = args.get('filename')
+        print(filename)
         if filename:
             del_result = del_eggfile(filename)
             return Result.get_result(ResponseCode.success, del_result)

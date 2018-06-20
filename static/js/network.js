@@ -1,8 +1,21 @@
+function _ajaxSetup(csrf_token) {
+    $.ajaxSetup({
+        'beforeSend': function (xhr, settings) {
+            if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) {
+                var csrftoken = csrf_token;
+                xhr.setRequestHeader("X-CSRFToken", csrftoken)
+            }
+        }
+    });
+}
 
-$.deleteJSON = function (url, data, callback) {
+
+$.deleteJSON = function (url, data, csrf_token, callback) {
+    _ajaxSetup(csrf_token);
     $.ajax({
         url: url,
         type: "delete",
+        contentType: "application/x-www-form-urlencoded",
         data: data,
         success: function (data, status) {
             callback(data, status);
@@ -10,7 +23,8 @@ $.deleteJSON = function (url, data, callback) {
     });
 };
 
-$.putJSON = function (url, data, callback) {
+$.putJSON = function (url, data, csrf_token, callback) {
+    _ajaxSetup(csrf_token);
     $.ajax({
         url: url,
         type: "put",
@@ -27,7 +41,8 @@ $.putJSON = function (url, data, callback) {
     });
 };
 
-$.postJSON = function (url, data, callback) {
+$.postJSON = function (url, data, csrf_token, callback) {
+    _ajaxSetup(csrf_token);
     $.ajax({
         url: url,
         type: "post",
@@ -57,3 +72,4 @@ $.getJSON = function (url, data, callback) {
         }
     });
 };
+
