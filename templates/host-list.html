@@ -94,7 +94,6 @@
                     {status: '正在运行', id: '1', host_name: '123', port_num: '123', ip_address: '123', create_time: '123'},
                 ],
                 hosts:[],
-                status:''
             },
             created: function () {
                 var csrf_token = "{{ csrf_token() }}";
@@ -115,8 +114,9 @@
 
                         success: function (data) {
                             _self.hosts = data.host_list;
+                            _self.hosts[0].status = 'qew';
 {#                            _self.status = _self.$el.attributes['run_status'];#}
-{#                            console.log(_self.$el.attributes['run_status'])#}
+                            console.log(_self.hosts[0].status)
                         },
                         error: function () {
                             console.log('error');

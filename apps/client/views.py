@@ -48,6 +48,7 @@ def test():
     item = {}
     host_list = HostList.query.all()
     for host in host_list:
+        item['status'] = '正在连接'
         item['id'] = host.id
         item['host_name'] = host.host_name
         item['port_num'] = host.port_num
