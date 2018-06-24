@@ -1,0 +1,39 @@
+import os
+
+SECRET_KEY = os.urandom(24)
+
+DEBUG = True
+
+DIALECT ='mysql'
+DRIVER = 'pymysql'
+USERNAME ='root'
+PASSWORD ='123qwe'
+HOST='127.0.0.1'
+PORT='3306'
+DATABASE='zlbbs'
+
+#PERMANENT_SESSION_LIFETIME = 60*60*24*31
+
+DB_URL ='{}+{}://{}:{}@{}:{}/{}?charset=utf8'.format(DIALECT,DRIVER,USERNAME,PASSWORD,HOST,PORT,DATABASE)
+
+SQLALCHEMY_DATABASE_URI = DB_URL
+SQLALCHEMY_TRACK_MODIFICATIONS = False
+
+
+CMS_USER_ID = 'sdsadasdsafsa'
+
+
+
+# MAIL_USE_TLS：端口号587
+# MAIL_USE_SSL：端口号465
+# QQ邮箱不支持非加密方式发送邮件
+# 发送者邮箱的服务器地址
+MAIL_SERVER = "smtp.qq.com"
+MAIL_PORT = '587'
+MAIL_USE_TLS = True
+# MAIL_USE_SSL
+MAIL_USERNAME = "1195292208@qq.com"
+MAIL_PASSWORD = "evjeczlhrlyghfjc"
+MAIL_DEFAULT_SENDER = "1195292208@qq.com"
+
+
