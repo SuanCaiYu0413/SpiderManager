@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>添加爬虫服务器</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi"/>
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon"/>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/font.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/xadmin.css') }}">
+    <script src="{{ url_for('static', filename='lib/layui/layui.js') }}" charset="utf-8"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/xadmin.js') }}"></script>
+    <script src="https://cdn.bootcss.com/vue/2.4.2/vue.min.js"></script>
+    <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+    <!--[if lt IE 9]>
+    <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+    <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+
+<body>
+<div class="x-body">
+    <form class="layui-form">
+        <div class="layui-form-item">
+            <label for="username" class="layui-form-label">
+                <span class="x-red">*</span>别称
+            </label>
+            <div class="layui-input-inline">
+                <input type="text" id="host_name" name="host_name" required="" lay-verify="required"
+                       autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="ip" class="layui-form-label">
+                <span class="x-red">*</span>IP地址
+            </label>
+            <div class="layui-input-inline">
+                <input type="text" id="ip_address" name="ip_address" required="" lay-verify="required"
+                       autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="port" class="layui-form-label">
+                <span class="x-red">*</span>端口
+            </label>
+            <div class="layui-input-inline">
+                <input type="text" id="port_num" name="port_num" required="" lay-verify="required"
+                       autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="L_pass" class="layui-form-label">
+                验证账号
+            </label>
+            <div class="layui-input-inline">
+                <input type="password" id="L_pass" name="pass" required=""
+                       autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="L_repass" class="layui-form-label">
+                验证密码
+            </label>
+            <div class="layui-input-inline">
+                <input type="password" id="L_repass" name="repass" required=""
+                       autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="L_repass" class="layui-form-label">
+            </label>
+            <button class="layui-btn" lay-filter="add" lay-submit="" id="add">
+                增加
+            </button>
+        </div>
+    </form>
+</div>
+
+
+<script>
+    layui.use(['form', 'layer'], function () {
+        $ = layui.jquery;
+        var form = layui.form
+            , layer = layui.layer;
+
+        //自定义验证规则
+        form.verify({
+            nikename: function (value) {
+                if (value.length < 5) {
+                    return '昵称至少得5个字符啊';
+                }
+            }
+            , pass: [/(.+){6,12}$/, '密码必须6到12位']
+            , repass: function (value) {
+                if ($('#L_pass').val() != $('#L_repass').val()) {
+                    return '两次密码不一致';
+                }
+            }
+        });
+
+        //监听提交
+        form.on('submit(add)', function (data) {
+            var csrf_token = "{{ csrf_token() }}";
+
+            $.ajaxSetup({
+                beforeSend: function(xhr, settings) {
+                    if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) {
+                        xhr.setRequestHeader("X-CSRFToken", csrf_token);
+                    }
+                }
+            });
+            host_name = data.field['host_name']
+            ip_address = data.field['ip_address']
+            port_num = data.field['port_num']
+            data = {
+                    'host_name':host_name,
+                    'ip_address':ip_address,
+                    'port_num':port_num
+                }
+            console.log(data)
+            $.ajax({
+                dataType:'json',
+                type: 'POST',
+                url: 'http://127.0.0.1:5000/client/hadd',
+                data: data,
+
+                success: function (data) {
+                    if(data['code'] == 200){
+                        layer.alert("增加成功", {icon: 6}, function () {
+                        // 获得frame索引
+                        var index = parent.layer.getFrameIndex(window.name);
+                        //关闭当前frame
+                        parent.layer.close(index);
+                        });
+                        return false;
+                    }else{
+                        alert('增加失败');
+                    }
+                },
+            'fail': function () {
+                alert('增加失败');
+            }
+        });
+
+        });
+
+
+    });
+</script>
+</body>
+
+</html>
