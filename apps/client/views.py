@@ -50,6 +50,9 @@ def test():
     for host in host_list:
         item['id'] = host.id
         item['host_name'] = host.host_name
+        item['port_num'] = host.port_num
+        item['ip_address'] = host.ip_address
+        item['create_time'] = host.create_time
         items.append(copy.deepcopy(item))
 
     return jsonify({'host_list': items})
