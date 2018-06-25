@@ -108,9 +108,9 @@
 
                 var _self = this;
 
-                function get_baseinfo() {
+                function get_host_list() {
                     $.get({
-                        url: 'http://127.0.0.1:5000/client/test',
+                        url: '/client/test',
 
                         success: function (data) {
                             _self.hosts = data.host_list;
@@ -124,9 +124,9 @@
                     });
                 }
 
-                get_baseinfo();
+                get_host_list();
                 setInterval(function () {
-                    get_baseinfo();
+                    get_host_list();
                 }, 10000);
             }
 
