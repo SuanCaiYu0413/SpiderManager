@@ -117,7 +117,7 @@
                             $(_self.hosts).each(function (index) {
                                 var ip_address = this.ip_address;//ip地址
                                 var port_num = this.port_num;//端口号
-
+                                console.log(ip_address);
                                 $.post({
                                     url:'http://127.0.0.1:5000/client/daemonstatus',
                                     data:{
@@ -125,7 +125,7 @@
                                          'port_num' : port_num
                                     },
                                     success:function (data) {
-                                        if (data['code'==200]){
+                                        if (data['code']==200){
                                             vm.$set(_self.hosts[index],'status','正在运行')
                                         }else {
                                             vm.$set(_self.hosts[index],'status','连接失败')
