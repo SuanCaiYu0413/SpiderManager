@@ -119,21 +119,21 @@
                                 var port_num = this.port_num;//端口号
                                 console.log(ip_address);
                                 $.post({
-                                    url:'http://127.0.0.1:5000/client/daemonstatus',
-                                    data:{
-                                         'ip_address': ip_address,
-                                         'port_num' : port_num
+                                    url: 'http://127.0.0.1:5000/client/daemonstatus',
+                                    data: {
+                                        'ip_address': ip_address,
+                                        'port_num': port_num
                                     },
-                                    success:function (data) {
-                                        if (data['code']==200){
-                                            vm.$set(_self.hosts[index],'status','正在运行')
-                                        }else {
-                                            vm.$set(_self.hosts[index],'status','连接失败')
+                                    success: function (data) {
+                                        if (data['code'] == 200) {
+                                            vm.$set(_self.hosts[index], 'status', '正在运行')
+                                        } else {
+                                            vm.$set(_self.hosts[index], 'status', '连接失败')
                                         }
                                     },
                                     error: function () {
-                                            vm.$set(_self.hosts[index],'status','未连接')
-                                        }
+                                        vm.$set(_self.hosts[index], 'status', '未连接')
+                                    }
                                 })
                             });
                         },
