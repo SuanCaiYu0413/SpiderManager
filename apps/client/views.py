@@ -38,7 +38,8 @@ def projects():
 @login_required
 def hlist():
     host_list = HostList.query.all()
-    return render_template('host-list.html', host_list=host_list)
+    counts = len(host_list)
+    return render_template('host-list.html', host_list=host_list,counts = counts)
 
 
 @bp.route('/test')
