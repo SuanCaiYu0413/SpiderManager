@@ -25,38 +25,15 @@
         <th>操作</th>
     </thead>
     <tbody>
-    <tr v-for="info in hosts">
-        <td class="td-status">
-          <span class="layui-btn layui-btn-normal layui-btn-mini" id="run_status" v-text="info.status"></span>
-        </td>
-        <td v-text="info.id"></td>
-        <td v-text="info.host_name"></td>
-        <td v-text="info.ip_address"></td>
-        <td v-text="info.port_num"></td>
-        <td v-text="info.create_time"></td>
-        <td class="td-manage">
-          <a onclick="member_stop(this,'10001')" href="javascript:;"  title="启用">
-            <i class="layui-icon">&#xe601;</i>
-          </a>
-          <a title="编辑"  onclick="x_admin_show('编辑','./hadd')" href="javascript:;">
-            <i class="layui-icon">&#xe642;</i>
-          </a>
-          <a title="删除" onclick="member_del(this,'要删除的id')" href="javascript:;">
-            <i class="layui-icon">&#xe640;</i>
-          </a>
-        </td>
-
-
-    </tr>
-{#    {% for host in host_list %}#}
-{#      <tr>#}
+{#    <tr v-for="info in hosts">#}
 {#        <td class="td-status">#}
-{#          <span class="layui-btn layui-btn-normal layui-btn-mini" id="run_status"></span></td>#}
-{#        <td>{{ host.id }}</td>#}
-{#        <td>{{ host.host_name }}</td>#}
-{#        <td>{{ host.ip_address }}</td>#}
-{#        <td>{{ host.port_num }}</td>#}
-{#        <td>{{ host.create_time }}</td>#}
+{#          <span class="layui-btn layui-btn-normal layui-btn-mini" id="run_status" v-text="info.status"></span>#}
+{#        </td>#}
+{#        <td v-text="info.id"></td>#}
+{#        <td v-text="info.host_name"></td>#}
+{#        <td v-text="info.ip_address"></td>#}
+{#        <td v-text="info.port_num"></td>#}
+{#        <td v-text="info.create_time"></td>#}
 {#        <td class="td-manage">#}
 {#          <a onclick="member_stop(this,'10001')" href="javascript:;"  title="启用">#}
 {#            <i class="layui-icon">&#xe601;</i>#}
@@ -64,12 +41,35 @@
 {#          <a title="编辑"  onclick="x_admin_show('编辑','./hadd')" href="javascript:;">#}
 {#            <i class="layui-icon">&#xe642;</i>#}
 {#          </a>#}
-{#          <a title="删除" onclick="member_del(this,'要删除的id')" href="javascript:;">#}
+{#          <a title="删除" onclick="member_del(this,[{info.id}])" href="javascript:;">#}
 {#            <i class="layui-icon">&#xe640;</i>#}
 {#          </a>#}
 {#        </td>#}
-{#      </tr>#}
-{#    {% endfor %}#}
+{##}
+{##}
+{#    </tr>#}
+    {% for host in host_list %}
+      <tr>
+        <td class="td-status">
+          <span class="layui-btn layui-btn-normal layui-btn-mini" id="run_status"></span></td>
+        <td>{{ host.id }}</td>
+        <td>{{ host.host_name }}</td>
+        <td>{{ host.ip_address }}</td>
+        <td>{{ host.port_num }}</td>
+        <td>{{ host.create_time }}</td>
+        <td class="td-manage">
+          <a onclick="member_stop(this,'10001')" href="javascript:;"  title="启用">
+            <i class="layui-icon">&#xe601;</i>
+          </a>
+          <a title="编辑"  onclick="x_admin_show('编辑','./hadd')" href="javascript:;">
+            <i class="layui-icon">&#xe642;</i>
+          </a>
+          <a title="删除" onclick="member_del(this,{{ host.id }})" href="javascript:;">
+            <i class="layui-icon">&#xe640;</i>
+          </a>
+        </td>
+      </tr>
+    {% endfor %}
     </tbody>
   </table>
   <div class="page">
@@ -85,115 +85,115 @@
 
 </div>
 
-    <script>
-
-        var vm = new Vue({
-            el: '#host_list',
-            data: {
-                hosts: [],
-            },
-            created: function () {
-                var csrf_token = "{{ csrf_token() }}";
-
-                $.ajaxSetup({
-                    beforeSend: function (xhr, settings) {
-                        if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) {
-                            xhr.setRequestHeader("X-CSRFToken", csrf_token);
-                        }
-                    }
-                });
-
-                var _self = this;
-
-                function get_host_list() {
-                    $.get({
-                        url: '/client/test',
-
-                        success: function (data) {
-                            _self.hosts = data.host_list;
-                            $(_self.hosts).each(function (index) {
-                                var ip_address = this.ip_address;//ip地址
-                                var port_num = this.port_num;//端口号
-                                console.log(ip_address);
-                                $.post({
-                                    url: 'http://127.0.0.1:5000/client/daemonstatus',
-                                    data: {
-                                        'ip_address': ip_address,
-                                        'port_num': port_num
-                                    },
-                                    success: function (data) {
-                                        if (data['code'] == 200) {
-                                            vm.$set(_self.hosts[index], 'status', '正在运行')
-                                        } else {
-                                            vm.$set(_self.hosts[index], 'status', '连接失败')
-                                        }
-                                    },
-                                    error: function () {
-                                        vm.$set(_self.hosts[index], 'status', '未连接')
-                                    }
-                                })
-                            });
-                        },
-                        error: function () {
-                            console.log('error');
-                        }
-                    });
-                }
-
-                get_host_list();
-                setInterval(function () {
-                    get_host_list();
-                }, 30000);
-            }
-
-        })
-
-    </script>
-
-
-{#<script>#}
+{#    <script>#}
 {##}
-{#    $(function () {#}
-{#        var csrf_token = "{{ csrf_token() }}";#}
+{#        var vm = new Vue({#}
+{#            delimiters: ['[{', '}]'],#}
+{#            el: '#host_list',#}
+{#            data: {#}
+{#                hosts: [],#}
+{#            },#}
+{#            created: function () {#}
+{#                var csrf_token = "{{ csrf_token() }}";#}
 {##}
-{#            $.ajaxSetup({#}
-{#                beforeSend: function(xhr, settings) {#}
-{#                    if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) {#}
-{#                        xhr.setRequestHeader("X-CSRFToken", csrf_token);#}
+{#                $.ajaxSetup({#}
+{#                    beforeSend: function (xhr, settings) {#}
+{#                        if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) {#}
+{#                            xhr.setRequestHeader("X-CSRFToken", csrf_token);#}
+{#                        }#}
 {#                    }#}
-{#                }#}
-{#            });#}
+{#                });#}
 {##}
+{#                var _self = this;#}
 {##}
-{#        $("#host_list").find("tr").each(function(){#}
-{#            var tdArr = $(this).children('td');#}
-{#            var ip_address = tdArr.eq(3).text();//ip地址#}
-{#            var port_num = tdArr.eq(4).text();//端口号#}
+{#                function get_host_list() {#}
+{#                    $.get({#}
+{#                        url: '/client/test',#}
 {##}
-{#            tdArr.children('span').eq(0).text('连接中')#}
-{##}
-{#            $.post({#}
-{#                url:'http://127.0.0.1:5000/client/daemonstatus',#}
-{#                data:{#}
-{#                    'ip_address': ip_address,#}
-{#                    'port_num' : port_num#}
-{#                },#}
-{#                success:function (data) {#}
-{#                    if (data['code']==200){#}
-{#                           tdArr.children('span').eq(0).text('正在运行');#}
-{#                       }else {#}
-{#                           tdArr.children('span').eq(0).text('连接失败');#}
-{#                           }#}
+{#                        success: function (data) {#}
+{#                            _self.hosts = data.host_list;#}
+{#                            $(_self.hosts).each(function (index) {#}
+{#                                var ip_address = this.ip_address;//ip地址#}
+{#                                var port_num = this.port_num;//端口号#}
+{#                                $.post({#}
+{#                                    url: 'http://127.0.0.1:5000/client/daemonstatus',#}
+{#                                    data: {#}
+{#                                        'ip_address': ip_address,#}
+{#                                        'port_num': port_num#}
+{#                                    },#}
+{#                                    success: function (data) {#}
+{#                                        if (data['code'] == 200) {#}
+{#                                            vm.$set(_self.hosts[index], 'status', '正在运行')#}
+{#                                        } else {#}
+{#                                            vm.$set(_self.hosts[index], 'status', '连接失败')#}
+{#                                        }#}
+{#                                    },#}
+{#                                    error: function () {#}
+{#                                        vm.$set(_self.hosts[index], 'status', '未连接')#}
+{#                                    }#}
+{#                                })#}
+{#                            });#}
 {#                        },#}
-{#                error: function () {#}
-{#                            tdArr.children('span').eq(0).text('未连接');#}
-{#                     }#}
-{#        });#}
+{#                        error: function () {#}
+{#                            console.log('error');#}
+{#                        }#}
+{#                    });#}
+{#                }#}
 {##}
-{#    });#}
-{#    })#}
+{#                get_host_list();#}
+{#                setInterval(function () {#}
+{#                    get_host_list();#}
+{#                }, 30000);#}
+{#            }#}
 {##}
-{#</script>#}
+{#        })#}
+{##}
+{#    </script>#}
+
+
+<script>
+
+    $(function () {
+        var csrf_token = "{{ csrf_token() }}";
+
+            $.ajaxSetup({
+                beforeSend: function(xhr, settings) {
+                    if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) {
+                        xhr.setRequestHeader("X-CSRFToken", csrf_token);
+                    }
+                }
+            });
+
+
+        $("#host_list").find("tr").each(function(){
+            var tdArr = $(this).children('td');
+            var ip_address = tdArr.eq(3).text();//ip地址
+            var port_num = tdArr.eq(4).text();//端口号
+
+            tdArr.children('span').eq(0).text('连接中...')
+
+            $.post({
+                url:'http://127.0.0.1:5000/client/daemonstatus',
+                data:{
+                    'ip_address': ip_address,
+                    'port_num' : port_num
+                },
+                success:function (data) {
+                    if (data['code']==200){
+                           tdArr.children('span').eq(0).text('正在运行');
+                       }else {
+                           tdArr.children('span').eq(0).text('连接失败');
+                           }
+                        },
+                error: function () {
+                            tdArr.children('span').eq(0).text('未连接');
+                     }
+        });
+
+    });
+    })
+
+</script>
 
 
 <script>
@@ -238,9 +238,39 @@
   /*用户-删除*/
   function member_del(obj,id){
       layer.confirm('确认要删除吗？',function(index){
-          //发异步删除数据
-          $(obj).parents("tr").remove();
-          layer.msg('已删除!',{icon:1,time:1000});
+          var csrf_token = "{{ csrf_token() }}";
+
+            $.ajaxSetup({
+                beforeSend: function(xhr, settings) {
+                    if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) {
+                        xhr.setRequestHeader("X-CSRFToken", csrf_token);
+                    }
+                }
+            });
+
+            data = {
+                    'host_id':id,
+                };
+            $.ajax({
+                dataType:'json',
+                type: 'POST',
+                url: '/client/dhost',
+                data: data,
+
+                success: function (data) {
+                    if(data['code'] == 200){
+                        $(obj).parents("tr").remove();
+                        layer.msg('已删除!',{icon:1,time:1000});
+                        return false;
+                    }else{
+                        var message = data['message']
+                        alert('增加失败: '+ message );
+                    }
+                },
+            'fail': function () {
+                alert('网络异常');
+            }
+        });
       });
   }
 

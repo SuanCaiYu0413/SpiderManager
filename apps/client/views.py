@@ -59,6 +59,21 @@ def test():
     return jsonify({'host_list': items})
 
 
+@bp.route('/dhost', methods=['POST'])
+@login_required
+def dhost():
+    host_id = request.form.get("host_id")
+    if not host_id:
+        return jsonify({'code': 404, 'message': '请传入ID'})
+    host = HostList.query.get(host_id)
+    if not host:
+        return jsonify({'code': 404, 'message': '没有这条数据'})
+
+    db.session.delete(host)
+    db.session.commit()
+    return jsonify({'code': 200, 'message': '删除成功'})
+
+
 @bp.route('/daemonstatus', methods=['POST'])
 @login_required
 def daemonstatus():
