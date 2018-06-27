@@ -169,7 +169,7 @@
                 var ip_address = tdArr.eq(3).text();//ip地址
                 var port_num = tdArr.eq(4).text();//端口号
 
-                tdArr.children('span').eq(0).text('连接中...')
+                tdArr.children('span').eq(0).text('连接中...');
 
                 $.post({
                     url: '/client/daemonstatus',
@@ -217,7 +217,7 @@
           if($(obj).attr('title')=='启用'){
 
             //发异步把用户状态进行更改
-            $(obj).attr('title','停用')
+            $(obj).attr('title','停用');
             $(obj).find('i').html('&#xe62f;');
 
             $(obj).parents("tr").find(".td-status").find('span').addClass('layui-btn-disabled').html('已停用');
@@ -248,7 +248,7 @@
             });
 
             data = {
-                    'host_id':id,
+                    'host_id':id
                 };
             $.ajax({
                 dataType:'json',
