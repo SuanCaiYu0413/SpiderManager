@@ -103,6 +103,33 @@ class Host_add(MethodView):
         db.session.commit()
         return jsonify({'code': 200})
 
+class Host_update(MethodView):
+    decorators = [login_required]
+
+    def get(self):
+        host_id = request.args.get('id')
+        if not host_id:
+            return jsonify({'code': 404, 'message': '请传入ID'})
+        host = HostList.query.get(host_id)
+        return render_template('host-update.html',host_info=host)
+
+    def post(self):
+        host_name = request.form.get('host_name')
+        ip_address = request.form.get('ip_address')
+        port_num = request.form.get('port_num')
+        host_id = request.form.get('host_id')
+        host_info = HostList.query.get(host_id)
+
+        if host_info:
+            host_info.host_name = host_name
+            host_info.ip_address = ip_address
+            host_info.port_num = port_num
+
+            db.session.commit()
+            return jsonify({'code': 200})
+        else:
+            return jsonify({'code': 404})
+
 
 class Login(MethodView):
 
@@ -123,3 +150,4 @@ class Login(MethodView):
 
 bp.add_url_rule('/login', view_func=Login.as_view('login'))
 bp.add_url_rule('/hadd', view_func=Host_add.as_view('hadd'))
+bp.add_url_rule('/hupdate', view_func=Host_update.as_view('hupdate'))

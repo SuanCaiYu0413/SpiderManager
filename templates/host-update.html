@@ -28,9 +28,9 @@
             <label for="username" class="layui-form-label">
                 <span class="x-red">*</span>别称
             </label>
-            <div class="layui-input-inline">
-                <input type="text" id="host_name" name="host_name" required="" lay-verify="required"
-                       autocomplete="off" class="layui-input">
+            <div class="layui-input-inline" id="host_id">
+                <input type="text" id={{ host_info.id }} name="host_name" required="" lay-verify="required"
+                       autocomplete="off" class="layui-input" value={{ host_info.host_name }}>
             </div>
         </div>
         <div class="layui-form-item">
@@ -39,7 +39,7 @@
             </label>
             <div class="layui-input-inline">
                 <input type="text" id="ip_address" name="ip_address" required="" lay-verify="required"
-                       autocomplete="off" class="layui-input">
+                       autocomplete="off" class="layui-input" value={{ host_info.ip_address }}>
             </div>
         </div>
         <div class="layui-form-item">
@@ -48,7 +48,7 @@
             </label>
             <div class="layui-input-inline">
                 <input type="text" id="port_num" name="port_num" required="" lay-verify="required"
-                       autocomplete="off" class="layui-input">
+                       autocomplete="off" class="layui-input" value={{ host_info.port_num }}>
             </div>
         </div>
         <div class="layui-form-item">
@@ -72,8 +72,8 @@
         <div class="layui-form-item">
             <label for="L_repass" class="layui-form-label">
             </label>
-            <button class="layui-btn" lay-filter="add" lay-submit="" id="add">
-                增加
+            <button class="layui-btn" lay-filter="save" lay-submit="" id="save">
+                保存
             </button>
         </div>
     </form>
@@ -102,7 +102,7 @@
         });
 
         //监听提交
-        form.on('submit(add)', function (data) {
+        form.on('submit(save)', function (data) {
             var csrf_token = "{{ csrf_token() }}";
 
             $.ajaxSetup({
@@ -115,20 +115,23 @@
             host_name = data.field['host_name'];
             ip_address = data.field['ip_address'];
             port_num = data.field['port_num'];
+            host_id = $("input[name='host_name']").attr('id')
+
             data = {
                     'host_name':host_name,
                     'ip_address':ip_address,
-                    'port_num':port_num
+                    'port_num':port_num,
+                    'host_id':host_id
                 };
             $.ajax({
                 dataType:'json',
                 type: 'POST',
-                url: '/client/hadd',
+                url: '/client/hupdate',
                 data: data,
 
                 success: function (data) {
                     if(data['code'] == 200){
-                        layer.alert("增加成功", {icon: 6}, function () {
+                        layer.alert("保存成功", {icon: 6}, function () {
                         // 获得frame索引
                         var index = parent.layer.getFrameIndex(window.name);
                         //关闭当前frame
@@ -137,11 +140,11 @@
                         });
                         return false;
                     }else{
-                        alert('增加失败');
+                        alert('修改失败');
                     }
                 },
             'fail': function () {
-                alert('增加失败');
+                alert('修改失败');
             }
         });
 
