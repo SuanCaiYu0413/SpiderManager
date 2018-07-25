@@ -17,11 +17,11 @@
                                     <li class="layui-col-xs2">
                                         {#                                上传文件#}
                                         <div class="layui-upload biangeng_3_1">
-                                            <button type="button" class="layui-btn" id="yingyezhizhao"><i
+                                            <button type="button" class="layui-btn" id="egg_file"><i
                                                     class="layui-icon">&#xe67c;</i>打包文件
                                             </button>
                                             <div class="layui-upload-list">
-                                                <img class="layui-upload-img" id="yingyezhizhao_preview">
+                                                <img class="layui-upload-img" id="egg_file_preview">
                                                 <!-- <p id="demoText"></p>-->
                                             </div>
                                         </div>
@@ -60,12 +60,12 @@
 
                 //执行实例
                 var uploadInst = upload.render({
-                    elem: '#yingyezhizhao' //绑定元素
+                    elem: '#egg_file' //绑定元素
                     , url: '../app/upload/changeImg' //上传接口
 
                     , done: function (res) {
                         //上传完毕回调
-                        $('#yingyezhizhao_preview').attr('src', '../' + data.data);
+                        $('#egg_file_preview').attr('src', '../' + data.data);
                         layer.msg('上传成功！');
                     }
                     , error: function () {
