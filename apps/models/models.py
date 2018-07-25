@@ -31,15 +31,6 @@ class Users(db.Model):
         return result
 
 
-class Clients(db.Model):
-    __tablename__ = 'clients'
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    name = db.Column(db.VARCHAR(50), nullable=False)
-    ip = db.Column(db.VARCHAR(50), nullable=False)
-    port = db.Column(db.Integer, nullable=False)
-    user = db.Column(db.VARCHAR(50), nullable=True)
-    pwd = db.Column(db.VARCHAR(50), nullable=True)
-    create_time = db.Column(db.DateTime, default=datetime.now)
 
 class HostList(db.Model):
     __tablename__ = 'host_list'
@@ -48,3 +39,5 @@ class HostList(db.Model):
     ip_address = db.Column(db.String(50),nullable=False)
     port_num = db.Column(db.String(50),nullable=False)
     create_time = db.Column(db.DateTime,default=datetime.now)
+    user = db.Column(db.VARCHAR(50), nullable=True)
+    pwd = db.Column(db.VARCHAR(50), nullable=True)

@@ -18,7 +18,7 @@ api = Api(bp)
 class BaseInfo(Resource):
     @api_required
     def get(self):
-        clients = Clients.query.all()
+        clients = HostList.query.all()
         peoject, count = get_eggfile_count()
         return Result.get_result(ResponseCode.success, {'client_count': len(clients), 'eggfile_count': count})
 
