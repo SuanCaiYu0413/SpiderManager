@@ -86,6 +86,11 @@ def daemonstatus():
     else:
         return jsonify({'code': 404, 'status': 'error'})
 
+@bp.route('/upload_project')
+@login_required
+def upload_project():
+    return render_template('upload-project.html')
+
 
 class Host_add(MethodView):
     decorators = [login_required]
