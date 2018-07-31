@@ -86,10 +86,17 @@ def daemonstatus():
     else:
         return jsonify({'code': 404, 'status': 'error'})
 
-@bp.route('/upload_project')
-@login_required
-def upload_project():
-    return render_template('upload-project.html')
+
+class Upload_Project(MethodView):
+    decorators = [login_required]
+
+    def get(self):
+        return render_template('upload-project.html')
+
+    def post(self):
+        f = request.files['file']
+        f.save(r'C:\Users\Administrator\Desktop\上传文件\xx.png')
+        return redirect(url_for('client.upload_project'))
 
 
 class Host_add(MethodView):
@@ -156,3 +163,4 @@ class Login(MethodView):
 bp.add_url_rule('/login', view_func=Login.as_view('login'))
 bp.add_url_rule('/hadd', view_func=Host_add.as_view('hadd'))
 bp.add_url_rule('/hupdate', view_func=Host_update.as_view('hupdate'))
+bp.add_url_rule('/upload_project', view_func=Upload_Project.as_view('upload_project'))
