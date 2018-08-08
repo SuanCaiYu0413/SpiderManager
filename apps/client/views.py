@@ -12,6 +12,7 @@ from flask import jsonify
 from exts import db
 from scrapyd_requests import *
 import copy
+import os
 
 bp = Blueprint("client", __name__, url_prefix='/client')
 
@@ -95,8 +96,15 @@ class Upload_Project(MethodView):
 
     def post(self):
         f = request.files['file']
-        f.save(r'C:\Users\Administrator\Desktop\上传文件\xx.png')
-        return redirect(url_for('client.upload_project'))
+        base_path = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
+        file_path = os.path.join(base_path, 'utils')
+        file_name = f.filename
+
+        if f:
+            f.save(r'C:\Users\Administrator\Desktop\上传文件\{}'.format(file_name))
+            return jsonify({'code': 200,'message':'上传成功！'})
+        else:
+            return jsonify({'code': 200,'message':'获取文件失败！'})
 
 
 class Host_add(MethodView):

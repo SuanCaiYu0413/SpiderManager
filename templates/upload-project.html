@@ -52,7 +52,7 @@
                 </div>
             </div>
         </fieldset>
-
+ </div>
 
         <script>
             layui.use('upload', function () {
@@ -72,10 +72,12 @@
                 var uploadInst = upload.render({
                     elem: '#egg_file' //绑定元素
                     , url: './upload_project' //上传接口
+                    ,accept: 'file'
+                    ,size: 1024*4
 
                     , done: function (res) {
                         //上传完毕回调
-                        $('#egg_file_preview').attr('src', 'C:\\Users\\Administrator\\Desktop\\上传文件' + data.data);
+                        {#$('#egg_file_preview').attr('src', 'C:\\Users\\Administrator\\Desktop\\上传文件' + data.data);#}    if (res.code===200)
                         layer.msg('上传成功！');
                     }
                     , error: function () {
