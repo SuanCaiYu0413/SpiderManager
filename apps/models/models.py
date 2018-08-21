@@ -41,3 +41,12 @@ class HostList(db.Model):
     create_time = db.Column(db.DateTime,default=datetime.now)
     user = db.Column(db.VARCHAR(50), nullable=True)
     pwd = db.Column(db.VARCHAR(50), nullable=True)
+
+
+class ProjectList(db.Model):
+    __tablename__ = "project_list"
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    project_name = db.Column(db.VARCHAR(50), nullable=False)
+    join_time = db.Column(db.VARCHAR(50), nullable=False)
+    status = db.Column(db.VARCHAR(50), nullable=False)
+    version = db.Column(db.TEXT(), nullable=True)

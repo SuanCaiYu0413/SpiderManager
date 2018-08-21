@@ -1,89 +1,209 @@
 {% extends 'base-head.html' %}
 
 {% block body %}
-    <div class="x-body layui-anim layui-anim-up">
-        <blockquote class="layui-elem-quote" id="time_data">
-        </blockquote>
-        <fieldset class="layui-elem-field">
-            <legend>打包文件</legend>
-            <div class="layui-field-box">
-                <div class="layui-col-md12">
-                    <div class="layui-card">
-                        <div class="layui-card-body">
-                            <div class="layui-carousel x-admin-carousel x-admin-backlog" lay-anim=""
-                                 lay-indicator="inside"
-                                 lay-arrow="none" style="width: 100%; height: 90px;">
-                                <ul class="layui-row layui-col-space10 layui-this" id="data_area">
-                                    <li class="layui-col-xs2">
-                                        {#                                上传文件#}
-                                        <div class="layui-upload biangeng_3_1">
-                                            <button type="button" class="layui-btn" id="egg_file"><i
-                                                    class="layui-icon">&#xe67c;</i>打包文件
-                                            </button>
-                                            <div class="layui-upload-list">
-                                                <img class="egg_file_preview" id="egg_file_preview">
-                                                <!-- <p id="demoText"></p>-->
-                                            </div>
-                                        </div>
-                                    </li>
-                                    {#                                    项目名称#}
-                                    <li class="layui-col-xs2">
-
-                                        <div class="layui-input-inline">
-                                            <input type="text" id="host_name" name="host_name" required=""
-                                                   lay-verify="required"
-                                                   autocomplete="off" class="layui-input" placeholder="输入项目名称">
-                                        </div>
-
-                                    </li>
-                                    {#                                    提交按钮#}
-                                    <li class="layui-col-xs2">
-
-                                        <button class="layui-btn" lay-filter="add" lay-submit="" id="add">
-                                            上传
+<div class="x-body layui-anim layui-anim-up">
+    <blockquote class="layui-elem-quote" id="time_data">
+    </blockquote>
+    <fieldset class="layui-elem-field">
+        <legend>打包文件</legend>
+        <div class="layui-field-box">
+            <div class="layui-col-md12">
+                <div class="layui-card">
+                    <div class="layui-card-body">
+                        <div class="layui-carousel x-admin-carousel x-admin-backlog" lay-anim=""
+                             lay-indicator="inside"
+                             lay-arrow="none" style="width: 100%; height: 90px;">
+                            <ul class="layui-row layui-col-space10 layui-this" id="data_area">
+                                <li class="layui-col-xs2">
+                                    {# 上传文件#}
+                                    <div class="layui-upload biangeng_3_1">
+                                        <button type="button" class="layui-btn" style="width:180px">
+                                            <div style="float: left"><i class="layui-icon">&#xe67c;</i>上传文件</div>
+                                            <input type="file" webkitdirectory id="upload_file"
+                                                   style="opacity:0;position:absolute;left:4px;top:6px;width:180px;height:36px;border:1px #0ff solid;">
                                         </button>
+                                        <div class="layui-upload-list">
+                                            <img class="egg_file_preview">
+                                            <!-- <p id="demoText"></p>-->
+                                        </div>
+                                    </div>
+                                </li>
+                                {# 项目名称#}
+                                <!--<li class="layui-col-xs2">-->
 
-                                    </li>
-                                </ul>
+                                <!--<div class="layui-input-inline">-->
+                                <!--<input type="text" id="host_name" name="project_name" required=""-->
+                                <!--lay-verify="required"-->
+                                <!--autocomplete="off" class="layui-input" placeholder="输入项目名称">-->
+                                <!--</div>-->
 
-                            </div>
+                                <!--</li>-->
+                                <!--{# 提交按钮#}-->
+                                <!--<li class="layui-col-xs2">-->
+
+                                <!--<button class="layui-btn" lay-filter="add" lay-submit="" id="add">-->
+                                <!--上传-->
+                                <!--</button>-->
+
+                                </li>
+                            </ul>
+
                         </div>
                     </div>
                 </div>
             </div>
-        </fieldset>
- </div>
+        </div>
+    </fieldset>
+</div>
 
-        <script>
-            layui.use('upload', function () {
-                var csrf_token = "{{ csrf_token() }}";
+<div class="x-nav">
+      <span class="layui-breadcrumb">
+        <a href="#">首页</a>
+        <a>
+          <cite>已上传</cite></a>
+      </span>
+</div>
+<input type="hidden" id="csrf_input" name="csrf_token" value="{{ csrf_token() }}">
+<div class="x-body">
+    <table class="layui-table" id="project_list">
+        <thead>
+        <tr>
+            <th>名称</th>
+            <th>时间</th>
+            <th>操作</th>
+        </thead>
+        <tbody>
+        {% for project in project_list %}
+        <tr :name="item.name" v-for="item in project_list" id="project">
+            <td id="name">{{ project.project_name }}</td>
+            <td id="join_time">{{ project.join_time }}</td>
+            <td class="td-manage">
+                <a title="部署" id="deployed" onclick="x_admin_show('部署项目','./deploy_project?project={{ project }}')">
+                    <i class="layui-icon">&#xe642;</i>
+                </a>
+                <a title="删除" id="del_project">
+                    <i class="layui-icon">&#xe640;</i>
+                </a>
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <div class="page">
+        <div>
+            <a class="prev" href="">&lt;&lt;</a>
+            <a class="num" href="">1</a>
+            <span class="current" href="">2</span>
+            <a class="num" href="">3</a>
+            <a class="num" href="">489</a>
+            <a class="next" href="">&gt;&gt;</a>
+        </div>
+    </div>
 
+</div>
+
+<script>
+    layui.use('upload', function () {
+        var csrf_token = "{{ csrf_token() }}";
+        $.ajaxSetup({
+            beforeSend: function (xhr, settings) {
+                if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) {
+                    xhr.setRequestHeader("X-CSRFToken", csrf_token);
+                }
+            }
+        });
+        var upload = layui.upload;
+        //执行实例
+        var uploadInst = upload.render({
+            elem: '#upload_file' //绑定元素
+            , url: './upload_project' //上传接口
+            , accept: "file"
+            , done: function (res) {
+                //上传完毕回调
+                if (res.code === 200) {
+                    layer.msg("上传成功！");
+                    window.location.reload();
+                }
+            }
+            , error: function () {
+                layer.msg('上传失败');
+            }
+        });
+
+        // 部署项目
+        layui.use('layer', function () {
+            var csrf_token = "{{ csrf_token() }}";
             $.ajaxSetup({
-                beforeSend: function(xhr, settings) {
+                beforeSend: function (xhr, settings) {
                     if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) {
                         xhr.setRequestHeader("X-CSRFToken", csrf_token);
                     }
                 }
             });
+            var layer = layui.layer;
+            // $(document).on('click', '#deployed', function () {
+            //     var name = $(this).parent().prev().prev().prev().text();
+            //     var data = {
+            //         "name": name
+            //     };
+            //     // layer.msg(status);
+            //     // layer.msg('hello');
+            //     $.ajax({
+            //         type: "post"
+            //         , url: "./deploy_project"
+            //         , dataType: "json"
+            //         , data: data
+            //         , success: function (res) {
+            //             if (res.code === 200) {
+            //                 layer.msg("部署成功！")
+            //             }
+            //         }
+            //         , error: function () {
+            //             layer.msg("部署失败")
+            //         }
+            //     })
+            // });
 
-                var upload = layui.upload;
-
-                //执行实例
-                var uploadInst = upload.render({
-                    elem: '#egg_file' //绑定元素
-                    , url: './upload_project' //上传接口
-                    ,accept: 'file'
-                    ,size: 1024*4
-
-                    , done: function (res) {
-                        //上传完毕回调
-                        {#$('#egg_file_preview').attr('src', 'C:\\Users\\Administrator\\Desktop\\上传文件' + data.data);#}    if (res.code===200)
-                        layer.msg('上传成功！');
-                    }
-                    , error: function () {
-                        layer.msg('上传失败');
+            // 删除项目
+            layui.use('layer', function () {
+                var csrf_token = "{{ csrf_token() }}";
+                $.ajaxSetup({
+                    beforeSend: function (xhr, settings) {
+                        if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) {
+                            xhr.setRequestHeader("X-CSRFToken", csrf_token);
+                        }
                     }
                 });
+                var layer = layui.layer;
+                $(document).on('click', '#del_project', function () {
+                    var name = $(this).parent().prev().prev().text();
+                    var del_project = $(this).parent().parent("#project")
+                    var data = {
+                        "name": name
+                    };
+                    $.ajax({
+                        type: "post"
+                        , url: "./del_project"
+                        , dataType: "json"
+                        , data: data
+                        , success: function (res) {
+                            if (res.code === 200) {
+                                layer.msg("已删除！")
+                                del_project.remove()
+                            }
+                        }
+                        , error: function () {
+                            layer.msg("删除失败")
+                        }
+                    });
+                });
             });
-        </script>
+        });
+    });
+</script>
 {% endblock %}
+
+
+
+
+

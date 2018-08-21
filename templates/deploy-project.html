@@ -1,0 +1,160 @@
+{% extends 'base-head.html' %}
+
+{% block body %}
+<div class="x-nav">
+  <span class="layui-breadcrumb">
+    <a href="#">首页</a>
+    <a>
+      <cite>项目部署管理</cite></a>
+  </span>
+</div>
+<div class="x-body">
+    <xblock>
+        <button class="layui-btn" id = "host_submit" value ="{{ project }}"><i class="layui-icon">&#x1005;</i>提交主机
+        </button>
+        <span class="x-right" style="line-height:40px">爬虫服务器数量: {{ counts }}  </span>
+    </xblock>
+    <table class="layui-table" id="host_list">
+        <thead>
+        <tr>
+            <th>状态</th>
+            <th>ID</th>
+            <th>别称</th>
+            <th>主机地址</th>
+            <th>端口</th>
+            <th>加入时间</th>
+            <th>操作</th>
+        </thead>
+        <tbody>
+        {% for host in host_list %}
+        <tr>
+            <td class="td-status">
+                <span class="layui-btn layui-btn-normal layui-btn-mini" id="run_status"></span>
+            </td>
+            <td>{{ host.id }}</td>
+            <td>{{ host.host_name }}</td>
+            <td>{{ host.ip_address }}</td>
+            <td>{{ host.port_num }}</td>
+            <td>{{ host.create_time }}</td>
+            <td class="td-manage">
+                <a title="部署" id ="host_deploy" href="javascript:;">
+                </a>
+                <!--<a title="删除" onclick="member_del(this,{{ host.id }})" href="javascript:;">-->
+                <!--<i class="layui-icon">&#xe640;</i>-->
+                <!--</a>-->
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {#
+    <div class="page">#}
+        {#
+        <div>#}
+            {# <a class="prev" href="">&lt;&lt;</a>#}
+            {# <a class="num" href="">1</a>#}
+            {# <span class="current">2</span>#}
+            {# <a class="num" href="">3</a>#}
+            {# <a class="num" href="">489</a>#}
+            {# <a class="next" href="">&gt;&gt;</a>#}
+            {#
+        </div>
+        #}
+        {#
+    </div>
+    #}
+
+</div>
+
+<script>
+    $(function () {
+        var csrf_token = "{{ csrf_token() }}";
+        $.ajaxSetup({
+            beforeSend: function (xhr, settings) {
+                if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) {
+                    xhr.setRequestHeader("X-CSRFToken", csrf_token);
+                }
+            }
+        });
+
+        $("#host_list").find("tr").each(function () {
+            var tdArr = $(this).children('td');
+            var ip_address = tdArr.eq(3).text();//ip地址
+            var port_num = tdArr.eq(4).text();//端口号
+            var deploy_color = $(this).children("td").eq(6).children("a"); //部署颜色
+            tdArr.children('span').eq(0).text('连接中...');
+            $.post({
+                url: '/client/daemonstatus',
+                data: {
+                    'ip_address': ip_address,
+                    'port_num': port_num,
+                },
+                success: function (data) {
+                    if (data['code'] == 200) {
+                        tdArr.children('span').eq(0).text('正在运行');
+                        deploy_color.append("<i class='layui-icon' style='font-size: 20px;color: #009688;'>&#xe61f;</i>");
+                    } else {
+                        tdArr.children('span').eq(0).text('连接失败');
+                    }
+                },
+                error: function () {
+                    tdArr.children('span').eq(0).text('未连接');
+                }
+            });
+
+        });
+    });
+
+</script>
+
+
+<script>
+    /*删除*/
+    layui.use('layer', function () {
+        var csrf_token = "{{ csrf_token() }}";
+        $.ajaxSetup({
+            beforeSend: function (xhr, settings) {
+                if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) {
+                    xhr.setRequestHeader("X-CSRFToken", csrf_token);
+                }
+            }
+        });
+        var layer = layui.layer;
+        $(document).on('click', '#host_submit', function () {
+            var project = $(this).val();
+            console.log(project);
+            $(this).innerHTML = "<i class='layui-icon' style='font-size: 20px;color: #009688;'>&#xe605;</i>";
+            $("#host_deploy").each(function () {
+                var ip_address = $(this).parent().prev().prev().prev().text();
+                var port_num = $(this).parent().prev().prev().text();
+                var host_list = new Array();
+                var ip_list = new Array();
+                ip_list.push(ip_address);
+                ip_list.push(port_num);
+                host_list.push(ip_list);
+                console.log(ip_list);
+                console.log(host_list);
+            });
+            // $(this).remove();
+        });
+    });
+
+    function delAll(argument) {
+
+        var data = tableCheck.getData();
+
+        layer.confirm('确认要删除吗？' + data, function (index) {
+            //捉到所有被选中的，发异步进行删除
+            layer.msg('删除成功', {icon: 1});
+            $(".layui-form-checked").not('.header').parents('tr').remove();
+        });
+    }
+</script>
+<script>var _hmt = _hmt || [];
+(function () {
+    var hm = document.createElement("script");
+    hm.src = "https://hm.baidu.com/hm.js?b393d153aeb26b46e9431fabaf0f6190";
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(hm, s);
+})();</script>
+{% endblock %}
